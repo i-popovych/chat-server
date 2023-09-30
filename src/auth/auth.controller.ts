@@ -4,15 +4,16 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Req,
-  UseGuards,
+  Res,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
-import { AtGuard, RtGuard } from './guards';
-import { JwtPayload } from './types';
+import { AuthPayload } from './enums';
+import {Response} from "express"
+import { Cookies, User } from './decorators';
+import { JwtPayloadEnum } from './enums/jwt-payload.enum';
+import { Public } from 'src/common';
 
 @Controller('auth')
 @ApiTags('Authorization and authentication')
@@ -21,31 +22,36 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Sign in' })
   // @ApiOkResponse({type: Tokens})
+  // todo: create decorator to response with cookie
+  @Public()
   @Post('local/signin')
-  signInLocal(@Body() dto: AuthDto) {
-    return this.authSevice.signInLocal(dto);
+  async signInLocal(@Res({ passthrough: true }) res: Response, @Body() dto: AuthDto) {
+    const tokens = await this.authSevice.signInLocal(dto);
+    res.cookie(AuthPayload.REFRESH_TOKEN, tokens.refreshToken, {httpOnly: true});
+    return tokens;
   }
 
   @ApiOperation({ summary: 'Sign up' })
+  @Public()
   @Post('local/signup')
   @HttpCode(HttpStatus.CREATED)
-  signUpLocal(@Body() dto: AuthDto) {
-    return this.authSevice.signUpLocal(dto);
+  async signUpLocal(@Res({ passthrough: true }) res: Response, @Body() dto: AuthDto) {
+    const tokens = await this.authSevice.signUpLocal(dto);
+    res.cookie(AuthPayload.REFRESH_TOKEN, tokens.refreshToken, {httpOnly: true});
+    return tokens;
   }
 
   @ApiOperation({ summary: 'Logout' })
-  @UseGuards(AtGuard)
   @Post('logout')
-  logout(@Req() req: Request) {
-    const user = req.user as JwtPayload;
-    this.authSevice.logout(user.userId);
+  logout(@User(JwtPayloadEnum.sub) userId: number) {
+    this.authSevice.logout(userId);
   }
 
   @ApiOperation({ summary: 'Refresh tokens' })
-  @UseGuards(RtGuard)
   @Post('refresh')
-  refresh(@Req() req: Request) {
-    const user = req.user as JwtPayload;
-    return this.authSevice.refresh(user.userId, req.cookies.refreshToken);
+  async refresh(@Res({ passthrough: true }) res: Response, @User(JwtPayloadEnum.sub) userId: number, @Cookies(AuthPayload.REFRESH_TOKEN) refreshToken: string) {
+    const tokens = await this.authSevice.refresh(userId, refreshToken);
+    res.cookie(AuthPayload.REFRESH_TOKEN, tokens.refreshToken, {httpOnly: true});
+    return tokens;
   }
 }

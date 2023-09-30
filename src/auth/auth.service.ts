@@ -34,7 +34,7 @@ export class AuthService {
       );
 
     return await this.generateAndSetTokens(
-      { userId: candidate.id, email: candidate.email },
+      { sub: candidate.id, email: candidate.email },
       candidate.id,
     );
   }
@@ -50,7 +50,7 @@ export class AuthService {
     const newUser = await this.userService.createUser(dto.email, hashPassward);
 
     return await this.generateAndSetTokens(
-      { userId: newUser.id, email: newUser.email },
+      { sub: newUser.id, email: newUser.email },
       newUser.id,
     );
   }
@@ -60,6 +60,8 @@ export class AuthService {
       where: { user_id: userId },
     });
   }
+
+  //todo: replase userId on sub
 
   async refresh(userId: number, rt: string): Promise<Tokens> {
     const token = await this.tokenRepository.findOne({
@@ -77,7 +79,7 @@ export class AuthService {
 
     const user = await this.userService.getUserById(userId);
     return await this.generateAndSetTokens(
-      { userId: user.id, email: user.email },
+      { sub: user.id, email: user.email },
       user.id,
     );
   }

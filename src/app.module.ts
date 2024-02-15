@@ -7,6 +7,8 @@ import { UserModel } from './user/user.model';
 import { TokenModel } from './auth/token.model';
 import { APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './auth/guards';
+import { ProjectModule } from './project/project.module';
+import { ProjectModel } from './project/project.model';
 
 @Module({
   imports: [
@@ -20,11 +22,12 @@ import { AtGuard } from './auth/guards';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      models: [UserModel, TokenModel],
+      models: [UserModel, TokenModel, ProjectModel],
       autoLoadModels: true,
     }),
     UserModule,
     AuthModule,
+    ProjectModule,
   ],
   controllers: [],
   providers: [

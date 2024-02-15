@@ -10,7 +10,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
 import { AuthPayload } from './enums';
-import {Response} from "express"
+import { Response } from 'express';
 import { Cookies, User } from './decorators';
 import { JwtPayloadEnum } from './enums/jwt-payload.enum';
 import { Public } from 'src/common';
@@ -25,9 +25,14 @@ export class AuthController {
   // todo: create decorator to response with cookie
   @Public()
   @Post('local/signin')
-  async signInLocal(@Res({ passthrough: true }) res: Response, @Body() dto: AuthDto) {
+  async signInLocal(
+    @Res({ passthrough: true }) res: Response,
+    @Body() dto: AuthDto,
+  ) {
     const tokens = await this.authSevice.signInLocal(dto);
-    res.cookie(AuthPayload.REFRESH_TOKEN, tokens.refreshToken, {httpOnly: true});
+    res.cookie(AuthPayload.REFRESH_TOKEN, tokens.refreshToken, {
+      httpOnly: true,
+    });
     return tokens;
   }
 
@@ -35,9 +40,14 @@ export class AuthController {
   @Public()
   @Post('local/signup')
   @HttpCode(HttpStatus.CREATED)
-  async signUpLocal(@Res({ passthrough: true }) res: Response, @Body() dto: AuthDto) {
+  async signUpLocal(
+    @Res({ passthrough: true }) res: Response,
+    @Body() dto: AuthDto,
+  ) {
     const tokens = await this.authSevice.signUpLocal(dto);
-    res.cookie(AuthPayload.REFRESH_TOKEN, tokens.refreshToken, {httpOnly: true});
+    res.cookie(AuthPayload.REFRESH_TOKEN, tokens.refreshToken, {
+      httpOnly: true,
+    });
     return tokens;
   }
 
@@ -49,9 +59,15 @@ export class AuthController {
 
   @ApiOperation({ summary: 'Refresh tokens' })
   @Post('refresh')
-  async refresh(@Res({ passthrough: true }) res: Response, @User(JwtPayloadEnum.sub) userId: number, @Cookies(AuthPayload.REFRESH_TOKEN) refreshToken: string) {
+  async refresh(
+    @Res({ passthrough: true }) res: Response,
+    @User(JwtPayloadEnum.sub) userId: number,
+    @Cookies(AuthPayload.REFRESH_TOKEN) refreshToken: string,
+  ) {
     const tokens = await this.authSevice.refresh(userId, refreshToken);
-    res.cookie(AuthPayload.REFRESH_TOKEN, tokens.refreshToken, {httpOnly: true});
+    res.cookie(AuthPayload.REFRESH_TOKEN, tokens.refreshToken, {
+      httpOnly: true,
+    });
     return tokens;
   }
 }

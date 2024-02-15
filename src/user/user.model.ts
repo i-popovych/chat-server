@@ -1,6 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, DataType, HasOne, Model, Table } from 'sequelize-typescript';
+import {
+  Column,
+  DataType,
+  HasMany,
+  HasOne,
+  Model,
+  Table,
+} from 'sequelize-typescript';
 import { TokenModel } from 'src/auth/token.model';
+import { ProjectModel } from '../project/project.model';
 
 interface UserCreationAttrs {
   email: string;
@@ -23,4 +31,7 @@ export class UserModel extends Model<UserModel, UserCreationAttrs> {
 
   @HasOne(() => TokenModel)
   token: TokenModel;
+
+  @HasMany(() => ProjectModel)
+  projects: ProjectModel[];
 }

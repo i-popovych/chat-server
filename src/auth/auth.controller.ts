@@ -5,15 +5,17 @@ import {
   HttpStatus,
   Post,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
+import { Public, User } from 'src/common';
 import { AuthService } from './auth.service';
+import { Cookies } from './decorators';
 import { AuthDto } from './dto';
 import { AuthPayload } from './enums';
-import { Response } from 'express';
-import { Cookies, User } from './decorators';
 import { JwtPayloadEnum } from './enums/jwt-payload.enum';
-import { Public } from 'src/common';
+import { RtGuard } from './guards';
 
 @Controller('auth')
 @ApiTags('Authorization and authentication')
@@ -57,6 +59,8 @@ export class AuthController {
     this.authSevice.logout(userId);
   }
 
+  @Public()
+  @UseGuards(RtGuard)
   @ApiOperation({ summary: 'Refresh tokens' })
   @Post('refresh')
   async refresh(

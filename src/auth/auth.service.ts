@@ -128,7 +128,7 @@ export class AuthService {
       },
       {
         secret: process.env.AUTHORIZATION_TOKEN_SECRET_KEY,
-        expiresIn: Number(process.env.REFRESH_TOKEN_LIFETIME),
+        expiresIn: Number(process.env.AUTHORIZATON_TOKEN_LIFETIME),
       },
     );
   }
@@ -140,7 +140,7 @@ export class AuthService {
       },
       {
         secret: process.env.REFRESH_TOKEN_SECRET_KEY,
-        expiresIn: Number(process.env.AUTHORIZATON_TOKEN_LIFETIME),
+        expiresIn: Number(process.env.REFRESH_TOKEN_LIFETIME),
       },
     );
   }

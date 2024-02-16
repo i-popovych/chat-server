@@ -1,2 +1,1 @@
-export * from './get-cookie.docorator'
-export * from './user.decorator'
+export * from './get-cookie.docorator';

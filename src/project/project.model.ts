@@ -1,13 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  BelongsTo,
+  BelongsToMany,
   Column,
   DataType,
-  ForeignKey,
+  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
+import { GroupModel } from '../group/group.model';
 import { UserModel } from '../user/user.model';
+import { ProjectUserModel } from './project-user.model';
 
 interface ProjectCreationAttrs {
   project_name: string;
@@ -25,17 +27,9 @@ export class ProjectModel extends Model<ProjectModel, ProjectCreationAttrs> {
   @Column({ type: DataType.STRING })
   project_name: string;
 
-  @ApiProperty({
-    example: '324',
-    description: 'Ref link on the project',
-  })
-  @Column({ type: DataType.INTEGER, unique: true })
-  project_ref: number;
+  @HasMany(() => GroupModel)
+  groups: GroupModel[];
 
-  @ForeignKey(() => UserModel)
-  @Column
-  owner_id: number;
-
-  @BelongsTo(() => UserModel)
-  user: UserModel;
+  @BelongsToMany(() => UserModel, () => ProjectUserModel)
+  users: UserModel[];
 }

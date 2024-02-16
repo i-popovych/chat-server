@@ -1,13 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  BelongsToMany,
   Column,
   DataType,
-  HasMany,
   HasOne,
   Model,
   Table,
 } from 'sequelize-typescript';
 import { TokenModel } from 'src/auth/token.model';
+import { GroupUserModel } from '../group/group-user.model';
+import { GroupModel } from '../group/group.model';
+import { ProjectUserModel } from '../project/project-user.model';
 import { ProjectModel } from '../project/project.model';
 
 interface UserCreationAttrs {
@@ -32,6 +35,9 @@ export class UserModel extends Model<UserModel, UserCreationAttrs> {
   @HasOne(() => TokenModel)
   token: TokenModel;
 
-  @HasMany(() => ProjectModel)
+  @BelongsToMany(() => GroupModel, () => GroupUserModel)
+  groups: GroupModel[];
+
+  @BelongsToMany(() => ProjectModel, () => ProjectUserModel)
   projects: ProjectModel[];
 }

@@ -6,6 +6,7 @@ import { UserService } from './user.service';
 import { GroupModel } from '../group/group.model';
 import { GroupUserModel } from '../group/group-user.model';
 import { ProjectUserModel } from '../project/project-user.model';
+import { UserController } from './user.controller';
 
 @Module({
   imports: [
@@ -19,5 +20,6 @@ import { ProjectUserModel } from '../project/project-user.model';
   ],
   providers: [UserService],
   exports: [UserService],
+  controllers: [UserController],
 })
 export class UserModule {}

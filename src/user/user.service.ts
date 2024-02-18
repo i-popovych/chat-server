@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 
 import { GroupModel } from '../group/group.model';
 
 import { UserModel } from './user.model';
+import { ProjectModel } from '../project/project.model';
 
 @Injectable()
 export class UserService {
@@ -31,5 +32,20 @@ export class UserService {
       include: [GroupModel],
       where: { id: groupId },
     });
+  }
+
+  async getUsersProjects(userId: number) {
+    const user = await this.getUserById(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const result = await this.userRepository.findOne({
+      include: ProjectModel,
+      where: { id: user.id },
+    });
+
+    return result.projects;
   }
 }

@@ -1,15 +1,15 @@
-import { Body, Controller, Get, HttpCode, Post, Req } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { ProjectService } from './project.service';
 
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateProjectDto } from './dto';
-import { User } from '../common';
 import { JwtPayloadEnum } from '../auth/enums/jwt-payload.enum';
+import { User } from '../common';
+import { CreateProjectDto } from './dto';
 
 @ApiTags('Project')
 @Controller('projects')
 export class ProjectController {
-  constructor(private projectService: ProjectService) {}
+  constructor(private readonly projectService: ProjectService) {}
 
   @ApiOperation({ summary: 'Create a new project' })
   @ApiResponse({
@@ -29,12 +29,5 @@ export class ProjectController {
     const { project_name } = dto;
 
     return this.projectService.createProject(project_name, userId);
-  }
-
-  @Get('my-projects')
-  getAllUserProjects(@Req() request: any) {
-    const { sub } = request.user;
-
-    return this.projectService.getUsersProjects(sub);
   }
 }

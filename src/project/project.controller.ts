@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Param, Post } from '@nestjs/common';
 import { ProjectService } from './project.service';
 
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -29,5 +29,13 @@ export class ProjectController {
     const { project_name } = dto;
 
     return this.projectService.createProject(project_name, userId);
+  }
+
+  @Get('join/:projectName')
+  inviteToProject(
+    @Param('projectName') projectName: string,
+    @User(JwtPayloadEnum.sub) userId: number,
+  ) {
+    return this.projectService.addUserToProject(projectName, userId);
   }
 }

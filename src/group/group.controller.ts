@@ -2,6 +2,8 @@ import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AddUserGroup, CreateGroupDto } from './dtos';
 import { GroupService } from './group.service';
+import { User } from '../common';
+import { JwtPayloadEnum } from '../auth/enums/jwt-payload.enum';
 
 @ApiTags('group')
 @Controller('group')
@@ -12,10 +14,13 @@ export class GroupController {
   @ApiBody({ type: CreateGroupDto })
   @ApiResponse({ status: 201, description: 'The created group' })
   @Post()
-  create(@Body() dto: CreateGroupDto) {
+  create(
+    @Body() dto: CreateGroupDto,
+    @User(JwtPayloadEnum.sub) userId: number,
+  ) {
     return this.groupService.createGroup(
       dto.group_name,
-      dto.owner_id,
+      userId,
       dto.project_id,
     );
   }
@@ -33,5 +38,18 @@ export class GroupController {
   @Get(':groupId/users')
   getGroupUsers(@Param('groupId') groupId: string) {
     return this.groupService.getGroupUsers(Number(groupId));
+  }
+
+  @Post('invite/:groupMame')
+  inviteUserToGroup(
+    @Param('groupName') groupName: string,
+    @User(JwtPayloadEnum.sub) userId: number,
+    @Body() dto: { project_id: number },
+  ) {
+    return this.groupService.addUserByGroupName(
+      userId,
+      groupName,
+      dto.project_id,
+    );
   }
 }

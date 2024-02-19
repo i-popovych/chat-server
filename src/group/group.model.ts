@@ -25,7 +25,7 @@ export class GroupModel extends Model<GroupModel, GroupCreationAttrs> {
 
   @ApiProperty({ example: 'general', description: 'Group name' })
   @Column({ type: DataType.STRING })
-  channel_name: string;
+  group_name: string;
 
   @ForeignKey(() => ProjectModel)
   @Column

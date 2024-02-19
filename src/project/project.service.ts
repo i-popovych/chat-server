@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { ProjectModel } from './project.model';
 import { UserService } from '../user/user.service';
-import { UserModel } from '../user/user.model';
+import { ProjectUserModel } from './project-user.model';
+import { ProjectModel } from './project.model';
 
 @Injectable()
 export class ProjectService {
@@ -10,6 +10,8 @@ export class ProjectService {
     @InjectModel(ProjectModel)
     private readonly projectRepository: typeof ProjectModel,
     private readonly userService: UserService,
+    @InjectModel(ProjectUserModel)
+    private readonly projectUserRepository: typeof ProjectUserModel,
   ) {}
 
   async createProject(project_name: string, userId: number) {
@@ -34,35 +36,35 @@ export class ProjectService {
     return project;
   }
 
-  async addUserToProject(
-    project_id: number,
-    userId: number,
-    addedUserId: number,
-  ) {
+  async addUserToProject(project_name: string, userId: number) {
     const user = await this.userService.getUserById(userId);
-    const addedUser = await this.userService.getUserById(addedUserId);
+    const project = await this.projectRepository.findOne({
+      where: { project_name },
+    });
 
-    if (!user || !addedUser) {
+    if (!user) {
       throw new NotFoundException('User not found');
     }
 
+    if (!project) {
+      throw new NotFoundException('Project not found');
+    }
+
     const isUserExistInProject = await this.checkUserProjectExists(
-      project_id,
+      project.id,
       userId,
     );
 
-    if (!isUserExistInProject) {
+    if (isUserExistInProject) {
       throw new NotFoundException('User already exists in the project');
     }
-    const project = await this.projectRepository.findByPk(project_id);
 
-    await addedUser.$add('projects', project.id);
+    await user.$add('projects', project.id);
   }
 
-  async checkUserProjectExists(project_id: number, userId: number) {
-    const project = await this.projectRepository.findOne({
-      where: { id: project_id },
-      include: { model: UserModel, where: { id: userId } },
+  async checkUserProjectExists(userId: number, project_id: number) {
+    const project = await this.projectUserRepository.findOne({
+      where: { user_id: userId, project_id },
     });
 
     return Boolean(project);

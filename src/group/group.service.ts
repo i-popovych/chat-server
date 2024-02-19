@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { ProjectService } from '../project/project.service';
 import { GroupModel } from './group.model';
@@ -56,10 +61,43 @@ export class GroupService {
     return group;
   }
 
-  // create the function in simillar way to add display all users that belongs to the group
+  async getGroupByName(group_name: string, project_id: number) {
+    return await this.groupRepository.findOne({
+      where: { group_name, project_id },
+    });
+  }
 
   async getGroupUsers(groupId: number) {
     const users = await this.userService.getAllGroupUsers(groupId);
     return users;
+  }
+
+  async addUserByGroupName(
+    userId: number,
+    groupName: string,
+    projectId: number,
+  ) {
+    const group = await this.getGroupByName(groupName, projectId);
+    if (!group) {
+      throw new NotFoundException('Group not found');
+    }
+
+    const user = await this.userService.getUserById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const isUserExistInProject = this.projectService.checkUserProjectExists(
+      userId,
+      projectId,
+    );
+    if (!isUserExistInProject) {
+      throw new HttpException(
+        'User does not exist in the project',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    await user.$add('groups', user.id);
   }
 }

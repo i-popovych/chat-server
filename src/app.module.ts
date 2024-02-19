@@ -13,6 +13,7 @@ import { GroupModule } from './group/group.module';
 import { GroupModel } from './group/group.model';
 import { ProjectUserModel } from './project/project-user.model';
 import { GroupUserModel } from './group/group-user.model';
+import { MessageModule } from './message/message.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { GroupUserModel } from './group/group-user.model';
     AuthModule,
     ProjectModule,
     GroupModule,
+    MessageModule,
   ],
   controllers: [],
   providers: [

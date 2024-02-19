@@ -3,6 +3,7 @@ import {
   BelongsToMany,
   Column,
   DataType,
+  HasMany,
   HasOne,
   Model,
   Table,
@@ -12,6 +13,7 @@ import { GroupUserModel } from '../group/group-user.model';
 import { GroupModel } from '../group/group.model';
 import { ProjectUserModel } from '../project/project-user.model';
 import { ProjectModel } from '../project/project.model';
+import { MessageModel } from '../message/message.model';
 
 interface UserCreationAttrs {
   email: string;
@@ -40,4 +42,7 @@ export class UserModel extends Model<UserModel, UserCreationAttrs> {
 
   @BelongsToMany(() => ProjectModel, () => ProjectUserModel)
   projects: ProjectModel[];
+
+  @HasMany(() => MessageModel)
+  messages: MessageModel[];
 }

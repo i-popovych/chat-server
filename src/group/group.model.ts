@@ -5,12 +5,14 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
 import { ProjectModel } from '../project/project.model';
 import { UserModel } from '../user/user.model';
 import { GroupUserModel } from './group-user.model';
+import { MessageModel } from '../message/message.model';
 
 interface GroupCreationAttrs {
   group_name: string;
@@ -36,4 +38,7 @@ export class GroupModel extends Model<GroupModel, GroupCreationAttrs> {
 
   @BelongsToMany(() => UserModel, () => GroupUserModel)
   users: UserModel[];
+
+  @HasMany(() => MessageModel)
+  messages: MessageModel[];
 }

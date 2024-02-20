@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { MessageModel } from './message.model';
+import { InjectModel } from '@nestjs/sequelize';
 
 @Injectable()
 export class MessageService {
-  constructor(private readonly messageRepository: typeof MessageModel) {}
+  constructor(
+    @InjectModel(MessageModel)
+    private readonly messageRepository: typeof MessageModel,
+  ) {}
 
   async createMessage(body: string, sender_id: number, group_id: number) {
     const message = await this.messageRepository.create({

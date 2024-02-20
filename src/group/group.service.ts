@@ -1,3 +1,4 @@
+import { GroupUserModel } from './group-user.model';
 import {
   HttpException,
   HttpStatus,
@@ -14,6 +15,8 @@ export class GroupService {
   constructor(
     @InjectModel(GroupModel)
     private readonly groupRepository: typeof GroupModel,
+    @InjectModel(GroupUserModel)
+    private readonly groupUserRepository: typeof GroupUserModel,
     private readonly projectService: ProjectService,
     private readonly userService: UserService,
   ) {}
@@ -99,5 +102,15 @@ export class GroupService {
     }
 
     await user.$add('groups', user.id);
+  }
+
+  async isUserInGroup(userId: number, groupId: number) {
+    return await this.groupUserRepository.findOne({
+      where: { user_id: userId, group_id: groupId },
+    });
+  }
+
+  async getGroupById(groupId: number) {
+    return await this.groupRepository.findByPk(groupId);
   }
 }

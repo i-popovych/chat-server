@@ -1,18 +1,20 @@
 import { Module } from '@nestjs/common';
-import { UserModule } from './user/user.module';
-import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from './auth/auth.module';
-import { UserModel } from './user/user.model';
-import { TokenModel } from './auth/token.model';
 import { APP_GUARD } from '@nestjs/core';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { AuthModule } from './auth/auth.module';
 import { AtGuard } from './auth/guards';
-import { ProjectModule } from './project/project.module';
-import { ProjectModel } from './project/project.model';
-import { GroupModule } from './group/group.module';
-import { GroupModel } from './group/group.model';
-import { ProjectUserModel } from './project/project-user.model';
+import { TokenModel } from './auth/token.model';
+import { GatewayModule } from './getway/getway.module';
 import { GroupUserModel } from './group/group-user.model';
+import { GroupModel } from './group/group.model';
+import { GroupModule } from './group/group.module';
+import { ProjectUserModel } from './project/project-user.model';
+import { ProjectModel } from './project/project.model';
+import { ProjectModule } from './project/project.module';
+import { UserModel } from './user/user.model';
+import { UserModule } from './user/user.module';
+import { MessageModel } from './message/message.model';
 import { MessageModule } from './message/message.module';
 
 @Module({
@@ -34,6 +36,7 @@ import { MessageModule } from './message/message.module';
         GroupModel,
         ProjectUserModel,
         GroupUserModel,
+        MessageModel,
       ],
       autoLoadModels: true,
     }),
@@ -41,6 +44,7 @@ import { MessageModule } from './message/message.module';
     AuthModule,
     ProjectModule,
     GroupModule,
+    GatewayModule,
     MessageModule,
   ],
   controllers: [],

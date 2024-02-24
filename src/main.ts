@@ -5,7 +5,13 @@ import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from './common/pipes';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
+
+  app.enableCors({
+    origin: ['http://localhost:5173'],
+    methods: ['GET', 'POST'],
+    credentials: true,
+  });
 
   const config = new DocumentBuilder()
     .setTitle('File hosting api')

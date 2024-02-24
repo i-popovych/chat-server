@@ -11,12 +11,13 @@ import {
 import { TokenModel } from 'src/auth/token.model';
 import { GroupUserModel } from '../group/group-user.model';
 import { GroupModel } from '../group/group.model';
+import { MessageModel } from '../message/message.model';
 import { ProjectUserModel } from '../project/project-user.model';
 import { ProjectModel } from '../project/project.model';
-import { MessageModel } from '../message/message.model';
 
 interface UserCreationAttrs {
   email: string;
+  username: string;
   password: string;
 }
 
@@ -33,6 +34,10 @@ export class UserModel extends Model<UserModel, UserCreationAttrs> {
   @ApiProperty({ example: '1sfjsdfhdsf', description: 'The password' })
   @Column({ type: DataType.STRING, allowNull: true })
   password: string;
+
+  @ApiProperty({ example: 'some user', description: 'Nickname of the user' })
+  @Column({ type: DataType.STRING })
+  username: string;
 
   @HasOne(() => TokenModel)
   token: TokenModel;

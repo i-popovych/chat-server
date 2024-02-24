@@ -31,11 +31,11 @@ export class ProjectController {
     return this.projectService.createProject(project_name, userId);
   }
 
-  @Get('join/:projectName')
+  @Get('join/:projectId')
   inviteToProject(
-    @Param('projectName') projectName: string,
+    @Param('projectId') projectId: string,
     @User(JwtPayloadEnum.sub) userId: number,
   ) {
-    return this.projectService.addUserToProject(projectName, userId);
+    return this.projectService.addUserToProject(projectId, userId);
   }
 }

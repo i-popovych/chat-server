@@ -13,8 +13,6 @@ import { ProjectUserModel } from './project-user.model';
 
 interface ProjectCreationAttrs {
   project_name: string;
-  owner_id: number;
-  project_ref: number;
 }
 
 @Table({ tableName: 'project' })

@@ -10,6 +10,7 @@ import { Tokens, JwtPayload } from './types';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/sequelize';
 import { TokenModel } from './token.model';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +20,7 @@ export class AuthService {
     @InjectModel(TokenModel) private tokenRepository: typeof TokenModel,
   ) {}
 
-  async signInLocal(dto: AuthDto): Promise<Tokens> {
+  async signInLocal(dto: LoginDto): Promise<Tokens> {
     const candidate = await this.userService.getUserByEmail(dto.email);
     if (!candidate)
       throw new ForbiddenException(
@@ -47,7 +48,11 @@ export class AuthService {
     }
 
     const hashPassward = await this.hashData(dto.password);
-    const newUser = await this.userService.createUser(dto.email, hashPassward);
+    const newUser = await this.userService.createUser(
+      dto.email,
+      dto.username,
+      hashPassward,
+    );
 
     return await this.generateAndSetTokens(
       { sub: newUser.id, email: newUser.email },

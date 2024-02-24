@@ -16,6 +16,7 @@ import { AuthDto } from './dto';
 import { AuthPayload } from './enums';
 import { JwtPayloadEnum } from './enums/jwt-payload.enum';
 import { RtGuard } from './guards';
+import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
 @ApiTags('Authorization and authentication')
@@ -29,7 +30,7 @@ export class AuthController {
   @Post('local/signin')
   async signInLocal(
     @Res({ passthrough: true }) res: Response,
-    @Body() dto: AuthDto,
+    @Body() dto: LoginDto,
   ) {
     const tokens = await this.authSevice.signInLocal(dto);
     res.cookie(AuthPayload.REFRESH_TOKEN, tokens.refreshToken, {

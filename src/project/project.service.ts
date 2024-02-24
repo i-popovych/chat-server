@@ -36,11 +36,9 @@ export class ProjectService {
     return project;
   }
 
-  async addUserToProject(project_name: string, userId: number) {
+  async addUserToProject(project_id: string, userId: number) {
     const user = await this.userService.getUserById(userId);
-    const project = await this.projectRepository.findOne({
-      where: { project_name },
-    });
+    const project = await this.projectRepository.findByPk(project_id);
 
     if (!user) {
       throw new NotFoundException('User not found');

@@ -7,4 +7,8 @@ export class AuthDto {
   @IsString()
   @Length(3, 8, { message: 'Wrong length of field' })
   readonly password: string;
+
+  @IsString()
+  @Length(3, 8, { message: 'Wrong length of field' })
+  readonly username: string;
 }

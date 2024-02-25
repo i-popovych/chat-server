@@ -104,7 +104,7 @@ export class GroupService {
     await user.$add('groups', user.id);
   }
 
-  async isUserInGroup(userId: number, groupId: number) {
+  async hasGroupUser(userId: number, groupId: number) {
     return await this.groupUserRepository.findOne({
       where: { user_id: userId, group_id: groupId },
     });

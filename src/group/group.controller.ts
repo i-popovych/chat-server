@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { AddUserGroup, CreateGroupDto } from './dtos';
+import { AddUserGroup, CreateGroupDto } from './dto';
 import { GroupService } from './group.service';
 import { User } from '../common';
 import { JwtPayloadEnum } from '../auth/enums/jwt-payload.enum';

@@ -40,8 +40,13 @@ export class GroupService {
       project_id: project.id,
     });
     const user = await this.userService.getUserById(userId);
+    const projectUsers =
+      await this.projectService.getAllProjectUsers(projectId);
+
+    const projectUsersIds = projectUsers.map((user) => user.id);
 
     await group.$set('users', user.id, { through: { isCreator: true } });
+    await group.$set('users', projectUsersIds);
 
     return group;
   }

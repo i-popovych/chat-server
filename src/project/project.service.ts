@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { UserService } from '../user/user.service';
 import { ProjectUserModel } from './project-user.model';
 import { ProjectModel } from './project.model';
+import { UserModel } from 'src/user/user.model';
 
 @Injectable()
 export class ProjectService {
@@ -66,5 +67,13 @@ export class ProjectService {
     });
 
     return Boolean(project);
+  }
+
+  async getAllProjectUsers(projectId: number) {
+    const project = await this.projectRepository.findByPk(projectId, {
+      include: [UserModel],
+    });
+
+    return project.users;
   }
 }

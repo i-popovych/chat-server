@@ -113,4 +113,17 @@ export class GroupService {
   async getGroupById(groupId: number) {
     return await this.groupRepository.findByPk(groupId);
   }
+
+  async getAllProjectGroup(userId: number, projectId: number) {
+    const isUserExistInProject =
+      await this.projectService.checkUserProjectExists(userId, projectId);
+
+    if (!isUserExistInProject) {
+      throw new NotFoundException('User does not exist in the project');
+    }
+
+    return await this.groupRepository.findAll({
+      where: { project_id: projectId },
+    });
+  }
 }

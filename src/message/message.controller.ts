@@ -14,8 +14,8 @@ export class MessageController {
   @Get()
   getAllUserGroups(
     @User(JwtPayloadEnum.sub) userId: number,
-    @Query('message') project: string,
+    @Query('group') group: string,
   ) {
-    return this.messageService.getChatMessages(userId, Number(project));
+    return this.messageService.getChatMessages(userId, Number(group));
   }
 }

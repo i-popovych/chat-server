@@ -1,3 +1,4 @@
+import { UserService } from './../user/user.service';
 import { MessageService } from './../message/message.service';
 import { OnModuleInit } from '@nestjs/common';
 import {
@@ -14,6 +15,7 @@ import { Events } from './enums/events.enum';
   cors: {
     origin: '*',
   },
+  allowEIO3: true,
   transports: ['websocket'],
 })
 export class MyGateway implements OnModuleInit {
@@ -23,6 +25,7 @@ export class MyGateway implements OnModuleInit {
   constructor(
     private readonly groupService: GroupService,
     private readonly messageService: MessageService,
+    private readonly userService: UserService,
   ) {}
 
   onModuleInit() {
@@ -49,13 +52,17 @@ export class MyGateway implements OnModuleInit {
     const { groupId, userId, content } = body;
     const message = await this.messageService.createMessage(
       content,
-      groupId,
       userId,
+      groupId,
     );
+
+    const user = await this.userService.getUserById(userId);
+
+    const response = { ...message.dataValues, users: user.dataValues };
 
     this.server.to(String(groupId)).emit(Events.GET_MESSAGE, {
       msg: 'New Message',
-      content: message.body,
+      content: response,
     });
   }
 }

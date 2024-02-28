@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AddUserGroup, CreateGroupDto } from './dto';
 import { GroupService } from './group.service';
@@ -23,6 +23,14 @@ export class GroupController {
       userId,
       dto.project_id,
     );
+  }
+
+  @Get()
+  getProjectGroups(
+    @User(JwtPayloadEnum.sub) userId: number,
+    @Query('project') projectId: number,
+  ) {
+    return this.groupService.getAllProjectGroup(userId, projectId);
   }
 
   @ApiOperation({ summary: 'Add a user to a group' })

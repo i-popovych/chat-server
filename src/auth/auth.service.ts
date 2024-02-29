@@ -11,6 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/sequelize';
 import { TokenModel } from './token.model';
 import { LoginDto } from './dto/login.dto';
+import { StaticStorageEnum } from 'src/common/constants/file.constants';
 
 @Injectable()
 export class AuthService {
@@ -47,11 +48,12 @@ export class AuthService {
       throw new BadRequestException('User with this email is alredy exist');
     }
 
-    const hashPassward = await this.hashData(dto.password);
+    const hashPassword = await this.hashData(dto.password);
     const newUser = await this.userService.createUser(
       dto.email,
       dto.username,
-      hashPassward,
+      hashPassword,
+      StaticStorageEnum.defaultAvatarName,
     );
 
     return await this.generateAndSetTokens(

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { FilesModule } from 'src/files/files.module';
 import { AuthModule } from './auth/auth.module';
 import { AtGuard } from './auth/guards';
 import { TokenModel } from './auth/token.model';
@@ -9,13 +10,13 @@ import { GatewayModule } from './getway/getway.module';
 import { GroupUserModel } from './group/group-user.model';
 import { GroupModel } from './group/group.model';
 import { GroupModule } from './group/group.module';
+import { MessageModel } from './message/message.model';
+import { MessageModule } from './message/message.module';
 import { ProjectUserModel } from './project/project-user.model';
 import { ProjectModel } from './project/project.model';
 import { ProjectModule } from './project/project.module';
 import { UserModel } from './user/user.model';
 import { UserModule } from './user/user.module';
-import { MessageModel } from './message/message.model';
-import { MessageModule } from './message/message.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { MessageModule } from './message/message.module';
     GroupModule,
     GatewayModule,
     MessageModule,
+    FilesModule,
   ],
   controllers: [],
   providers: [

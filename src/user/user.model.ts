@@ -19,6 +19,7 @@ interface UserCreationAttrs {
   email: string;
   username: string;
   password: string;
+  avatar?: string;
 }
 
 @Table({ tableName: 'user' })
@@ -38,6 +39,15 @@ export class UserModel extends Model<UserModel, UserCreationAttrs> {
   @ApiProperty({ example: 'some user', description: 'Nickname of the user' })
   @Column({ type: DataType.STRING })
   username: string;
+
+  @ApiProperty({
+    example: '23u24342394.png',
+    description: 'The path to the file',
+  })
+  @Column({
+    type: DataType.STRING,
+  })
+  avatar: string;
 
   @HasOne(() => TokenModel)
   token: TokenModel;

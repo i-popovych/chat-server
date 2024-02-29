@@ -3,10 +3,13 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from './common/pipes';
+import * as express from 'express';
+import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
 
+  app.use('/static', express.static(join(__dirname, '..', 'static')));
   app.enableCors({
     origin: ['http://localhost:5173'],
     methods: ['GET', 'POST'],

@@ -12,11 +12,17 @@ export class UserService {
     @InjectModel(UserModel) private userRepository: typeof UserModel,
   ) {}
 
-  async createUser(email: string, username: string, password: string) {
+  async createUser(
+    email: string,
+    username: string,
+    password: string,
+    avatar?: string,
+  ) {
     return await this.userRepository.create({
       email,
       username,
       password,
+      avatar,
     });
   }
 

@@ -9,6 +9,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { ProjectService } from '../project/project.service';
 import { GroupModel } from './group.model';
 import { UserService } from '../user/user.service';
+import { UserModel } from 'src/user/user.model';
 
 @Injectable()
 export class GroupService {
@@ -129,6 +130,20 @@ export class GroupService {
 
     return await this.groupRepository.findAll({
       where: { project_id: projectId },
+    });
+  }
+
+  async getAllUserGroup(userId: number, projectId: number) {
+    const isUserExistInProject =
+      await this.projectService.checkUserProjectExists(userId, projectId);
+
+    if (!isUserExistInProject) {
+      throw new NotFoundException('User does not exist in the project');
+    }
+
+    return await this.groupRepository.findAll({
+      where: { project_id: projectId },
+      include: [{ model: UserModel, where: { id: userId } }],
     });
   }
 }

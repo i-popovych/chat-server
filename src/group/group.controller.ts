@@ -33,6 +33,14 @@ export class GroupController {
     return this.groupService.getAllProjectGroup(userId, projectId);
   }
 
+  @Get('user')
+  getUserGroup(
+    @User(JwtPayloadEnum.sub) userId: number,
+    @Query('project') projectId: number,
+  ) {
+    return this.groupService.getAllUserGroup(userId, projectId);
+  }
+
   @ApiOperation({ summary: 'Add a user to a group' })
   @ApiBody({ type: AddUserGroup })
   @ApiResponse({ status: 200, description: 'The updated group' })

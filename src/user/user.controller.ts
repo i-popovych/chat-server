@@ -1,4 +1,4 @@
-import { Controller, Get, Req } from '@nestjs/common';
+import { Body, Controller, Get, Put, Req } from '@nestjs/common';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -15,5 +15,12 @@ export class UserController {
     const { sub } = request.user;
 
     return this.userService.getUsersProjects(sub);
+  }
+
+  @Put('/avatar')
+  updateAvatar(@Body() body: any) {
+    const avatarName = body.avatarName;
+
+    return this.userService.updateAvatar(avatarName);
   }
 }

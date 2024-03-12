@@ -55,4 +55,16 @@ export class UserService {
 
     return result.projects;
   }
+
+  async updateAvatar(avatarName: string) {
+    const user = await this.userRepository.findOne({ where: { id: 1 } });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.avatar = avatarName;
+    await user.save();
+    return user;
+  }
 }

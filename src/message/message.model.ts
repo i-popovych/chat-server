@@ -4,12 +4,14 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
 import { GroupModel } from '../group/group.model';
 
 import { UserModel } from '../user/user.model';
+import { FileModel } from 'src/message/file.model';
 
 interface MessageCreatingAttr {
   body: string;
@@ -38,4 +40,7 @@ export class MessageModel extends Model<MessageModel, MessageCreatingAttr> {
   group_id: number;
   @BelongsTo(() => GroupModel)
   groups: GroupModel;
+
+  @HasMany(() => FileModel)
+  files: FileModel[];
 }

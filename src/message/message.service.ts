@@ -3,22 +3,54 @@ import { MessageModel } from './message.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { GroupService } from '../group/group.service';
 import { UserModel } from '../user/user.model';
+import { SendFileItem } from 'src/getway/types/SendMessageBody.type';
+import { FileModel } from 'src/message/file.model';
+import { FilesService } from 'src/files/files.service';
+import { CreateMessageDto } from 'src/message/dto/CreateMessage.dto';
 
 @Injectable()
 export class MessageService {
   constructor(
     @InjectModel(MessageModel)
     private readonly messageRepository: typeof MessageModel,
+    @InjectModel(FileModel)
+    private readonly fileRepository: typeof FileModel,
     private readonly groupService: GroupService,
+    private readonly filesSerivce: FilesService,
   ) {}
 
-  async createMessage(body: string, sender_id: number, group_id: number) {
+  async createMessage(
+    body: string,
+    sender_id: number,
+    group_id: number,
+    files?: SendFileItem[],
+  ): Promise<CreateMessageDto> {
     const message = await this.messageRepository.create({
       body,
       group_id,
       sender_id,
     });
-    return message;
+
+    const uploadedFilesPath = [];
+
+    if (files.length) {
+      for (const file of files) {
+        const filePath = await this.filesSerivce.writeBufferFile(
+          file.data,
+          file.name.split('.').pop(),
+        );
+
+        uploadedFilesPath.push(filePath);
+
+        await this.fileRepository.create({
+          fileName: file.name,
+          filePath,
+          message_id: message.id,
+        });
+      }
+    }
+
+    return { message, filePath: uploadedFilesPath };
   }
 
   private async getMessagesByGroup(groupId: number) {

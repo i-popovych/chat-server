@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { FilesModule } from 'src/files/files.module';
+import { FileModel } from 'src/message/file.model';
 import { AuthModule } from './auth/auth.module';
 import { AtGuard } from './auth/guards';
 import { TokenModel } from './auth/token.model';
@@ -38,6 +39,7 @@ import { UserModule } from './user/user.module';
         ProjectUserModel,
         GroupUserModel,
         MessageModel,
+        FileModel,
       ],
       autoLoadModels: true,
     }),

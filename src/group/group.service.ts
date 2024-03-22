@@ -1,4 +1,3 @@
-import { GroupUserModel } from './group-user.model';
 import {
   HttpException,
   HttpStatus,
@@ -6,10 +5,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { ProjectService } from '../project/project.service';
-import { GroupModel } from './group.model';
-import { UserService } from '../user/user.service';
 import { UserModel } from 'src/user/user.model';
+import { ProjectService } from '../project/project.service';
+import { UserService } from '../user/user.service';
+import { GroupUserModel } from './group-user.model';
+import { GroupModel } from './group.model';
 
 @Injectable()
 export class GroupService {
@@ -77,7 +77,16 @@ export class GroupService {
   }
 
   async getGroupUsers(groupId: number) {
-    const users = await this.userService.getAllGroupUsers(groupId);
+    const res = await this.groupRepository.findByPk(groupId, {
+      include: [UserModel],
+    });
+
+    const users = [];
+
+    res.users.forEach((user) => {
+      users.push(user);
+    });
+
     return users;
   }
 

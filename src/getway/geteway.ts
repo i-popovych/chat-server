@@ -10,6 +10,7 @@ import {
 import { Server } from 'socket.io';
 import { GroupService } from '../group/group.service';
 import { Events } from './enums/events.enum';
+import { SendMessageBody } from 'src/getway/types/SendMessageBody.type';
 
 @WebSocketGateway({
   cors: {
@@ -48,17 +49,18 @@ export class MyGateway implements OnModuleInit {
   }
 
   @SubscribeMessage(Events.SET_NEW_MESSAGE)
-  async onNewMessage(@MessageBody() body: any) {
-    const { groupId, userId, content } = body;
-    const message = await this.messageService.createMessage(
+  async onNewMessage(@MessageBody() body: SendMessageBody) {
+    const { groupId, userId, content, files } = body;
+    const res = await this.messageService.createMessage(
       content,
-      userId,
-      groupId,
+      +userId,
+      +groupId,
+      files,
     );
 
-    const user = await this.userService.getUserById(userId);
+    const user = await this.userService.getUserById(+userId);
 
-    const response = { ...message.dataValues, users: user.dataValues };
+    const response = { ...res, users: user.dataValues };
 
     this.server.to(String(groupId)).emit(Events.GET_MESSAGE, {
       msg: 'New Message',

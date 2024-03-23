@@ -23,7 +23,7 @@ export class MessageService {
     body: string,
     sender_id: number,
     group_id: number,
-    files?: SendFileItem[],
+    files: SendFileItem[] | undefined,
   ): Promise<CreateMessageDto> {
     const message = await this.messageRepository.create({
       body,
@@ -31,32 +31,32 @@ export class MessageService {
       sender_id,
     });
 
-    const uploadedFilesPath = [];
+    const uploadedFilesPath: FileModel[] = [];
 
-    if (files.length) {
+    if (files && files.length) {
       for (const file of files) {
         const filePath = await this.filesSerivce.writeBufferFile(
           file.data,
           file.name.split('.').pop(),
         );
 
-        uploadedFilesPath.push(filePath);
-
-        await this.fileRepository.create({
+        const fileModel = await this.fileRepository.create({
           fileName: file.name,
           filePath,
           message_id: message.id,
         });
+
+        uploadedFilesPath.push(fileModel.dataValues);
       }
     }
 
-    return { message, filePath: uploadedFilesPath };
+    return { message, files: uploadedFilesPath };
   }
 
   private async getMessagesByGroup(groupId: number) {
     const result = await this.messageRepository.findAll({
       where: { group_id: groupId },
-      include: [UserModel],
+      include: [UserModel, FileModel],
     });
 
     return result;

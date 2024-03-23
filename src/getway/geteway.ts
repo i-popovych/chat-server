@@ -51,20 +51,17 @@ export class MyGateway implements OnModuleInit {
   @SubscribeMessage(Events.SET_NEW_MESSAGE)
   async onNewMessage(@MessageBody() body: SendMessageBody) {
     const { groupId, userId, content, files } = body;
-    const res = await this.messageService.createMessage(
+    const message = await this.messageService.createMessage(
       content,
-      +userId,
-      +groupId,
+      Number(userId),
+      Number(groupId),
       files,
     );
 
-    const user = await this.userService.getUserById(+userId);
+    const user = await this.userService.getUserById(Number(userId));
 
-    const response = { ...res, users: user.dataValues };
+    const response = { ...message, users: user.dataValues };
 
-    this.server.to(String(groupId)).emit(Events.GET_MESSAGE, {
-      msg: 'New Message',
-      content: response,
-    });
+    this.server.to(String(groupId)).emit(Events.GET_MESSAGE, response);
   }
 }

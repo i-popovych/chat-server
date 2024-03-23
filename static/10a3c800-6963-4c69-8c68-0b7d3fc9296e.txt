@@ -1,0 +1,80 @@
+export const getLogin = async (
+  dispatch: Dispatch<IActionType>,
+  data: ILoginEffect
+) => {
+  dispatch(getLoginPending());
+  const res: any = await getLoginEffect(data);
+  const notification = capitalizingSentence(res?.data?.message);
+  if (res && res.status >= 200 && res.status <= 300) {
+    // getDashboardToken()   // temp: for get token API
+    const token = res.data.data.token;
+    sessionToken.setToken(token);
+    dispatch(getLoginSuccess(token || ""));
+    return {
+      result: true,
+      message: notification || "Login Successful",
+    };
+  }
+  dispatch(getLoginFailed(notification || "Something went wrong"));
+  return {
+    result: false,
+    message: notification || "Something Went Wrong",
+  };
+};
+
+
+
+  const onFinish = async (values: { username: string; password: string }) => {
+    const { username, password } = values;
+    const _sessionShopHash = sessionShopHash.getShopHash() || "";
+    getLogin(dispatch, {
+      username,
+      password,
+      shop_hash: _sessionShopHash,
+    }).then((res: any) => {
+      if (res.result) {
+        if (!_sessionShopHash) {
+          const getInfo = async () => {
+            await getAuth(dispatch).then(async (res: any) => {
+              if (!res.result) {
+                message.error(res.message);
+                return false;
+              } else {
+                if (res?.data?.shops?.length > 1) {
+                  history.push("/select-shop");
+                  return;
+                }
+
+                const hash = res.data.shops[0].shop_hash;
+                sessionShopHash.setShopHash(hash);
+
+                await getAuth(dispatch);
+                getShopById(singleDispatch, hash).then((res: any) => {
+                  if (res?.result) {
+                    getKlaviyoIntegration(integrationDispatch).then(
+                      (res: any) => {
+                        // Klaviyo integration for hide notification menu and routing
+                        history.push("/");
+                      }
+                    );
+                  }
+                });
+
+                return true;
+              }
+            });
+          };
+
+          getInfo();
+        } else {
+          getAuth(dispatch).then((res: any) => res);
+          getShopById(singleDispatch, _sessionShopHash).then((res: any) =>
+            history.push("/")
+          );
+        }
+        message.success(res.message);
+      } else if (!res.result) {
+        message.error(res.message);
+      }
+    });
+  };

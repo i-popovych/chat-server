@@ -1,4 +1,12 @@
-import { Body, Controller, Get, HttpCode, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
 import { ProjectService } from './project.service';
 
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -37,5 +45,10 @@ export class ProjectController {
     @User(JwtPayloadEnum.sub) userId: number,
   ) {
     return this.projectService.addUserToProject(projectId, userId);
+  }
+
+  @Get(':id/users')
+  getProjectUsers(@Param('id', ParseIntPipe) projectId: number) {
+    return this.projectService.getAllProjectUsers(projectId);
   }
 }

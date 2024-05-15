@@ -22,7 +22,7 @@ import { JwtPayloadEnum } from 'src/auth/enums/jwt-payload.enum';
   allowEIO3: true,
   transports: ['websocket'],
 })
-export class MyGateway implements OnModuleInit {
+export class MessageGateway implements OnModuleInit {
   @WebSocketServer()
   server: Server;
 

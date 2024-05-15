@@ -50,8 +50,8 @@ export class ProjectService {
     }
 
     const isUserExistInProject = await this.checkUserProjectExists(
-      project.id,
       userId,
+      project.id,
     );
 
     if (isUserExistInProject) {

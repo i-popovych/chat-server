@@ -10,10 +10,10 @@ import { JwtPayloadEnum } from '../auth/enums/jwt-payload.enum';
 export class GroupController {
   constructor(private groupService: GroupService) {}
 
-  @ApiOperation({ summary: 'Create a group' })
+  @Post()
+  @ApiOperation({ summary: 'Create a new group' })
   @ApiBody({ type: CreateGroupDto })
   @ApiResponse({ status: 201, description: 'The created group' })
-  @Post()
   create(
     @Body() dto: CreateGroupDto,
     @User(JwtPayloadEnum.sub) userId: number,
@@ -26,6 +26,8 @@ export class GroupController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'Retrieve all groups for a specific project' })
+  @ApiResponse({ status: 200, description: 'List of project groups' })
   getProjectGroups(
     @User(JwtPayloadEnum.sub) userId: number,
     @Query('project') projectId: number,
@@ -34,6 +36,11 @@ export class GroupController {
   }
 
   @Get('user')
+  @ApiOperation({
+    summary:
+      'Retrieve all groups associated with a user within a specific project',
+  })
+  @ApiResponse({ status: 200, description: 'List of user groups' })
   getUserGroup(
     @User(JwtPayloadEnum.sub) userId: number,
     @Query('project') projectId: number,
@@ -41,22 +48,28 @@ export class GroupController {
     return this.groupService.getAllUserGroup(userId, projectId);
   }
 
-  @ApiOperation({ summary: 'Add a user to a group' })
-  @ApiBody({ type: AddUserGroup })
-  @ApiResponse({ status: 200, description: 'The updated group' })
   @Post('add-user')
+  @ApiOperation({ summary: 'Add a user to a specific group' })
+  @ApiBody({ type: AddUserGroup })
+  @ApiResponse({
+    status: 200,
+    description: 'The updated group with new user added',
+  })
   addUser(@Body() dto: AddUserGroup) {
     return this.groupService.addUserToGroup(dto.group_id, dto.user_id);
   }
 
-  @ApiOperation({ summary: 'Get users of a group' })
-  @ApiResponse({ status: 200, description: 'The group users' })
   @Get(':groupId/users')
+  @ApiOperation({ summary: 'Get all users of a specific group' })
+  @ApiResponse({ status: 200, description: 'List of users in the group' })
   getGroupUsers(@Param('groupId') groupId: string) {
     return this.groupService.getGroupUsers(Number(groupId));
   }
 
-  @Post('invite/:groupMame')
+  @Post('invite/:groupName')
+  @ApiOperation({ summary: 'Invite a user to join a group by group name' })
+  @ApiBody({ required: true })
+  @ApiResponse({ status: 200, description: 'User invited to the group' })
   inviteUserToGroup(
     @Param('groupName') groupName: string,
     @User(JwtPayloadEnum.sub) userId: number,

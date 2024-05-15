@@ -14,7 +14,7 @@ import { JwtPayloadEnum } from '../auth/enums/jwt-payload.enum';
 import { User } from '../common';
 import { CreateProjectDto } from './dto';
 
-@ApiTags('Project')
+@ApiTags('project')
 @Controller('projects')
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
@@ -40,6 +40,16 @@ export class ProjectController {
   }
 
   @Get('join/:projectId')
+  @ApiOperation({ summary: 'Invite a user to join a project' })
+  @ApiResponse({
+    status: 200,
+    description: 'User has been added to the project successfully.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Project not found.',
+  })
+  @Get('join/:projectId')
   inviteToProject(
     @Param('projectId') projectId: string,
     @User(JwtPayloadEnum.sub) userId: number,
@@ -47,6 +57,16 @@ export class ProjectController {
     return this.projectService.addUserToProject(projectId, userId);
   }
 
+  @Get(':id/users')
+  @ApiOperation({ summary: 'Get all users in a project' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of all users in the project.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Project not found.',
+  })
   @Get(':id/users')
   getProjectUsers(@Param('id', ParseIntPipe) projectId: number) {
     return this.projectService.getAllProjectUsers(projectId);
